@@ -165,7 +165,7 @@ for environment in environments:
         environment_astrafy.bucket_folder_results =  f"dbt-target-{environment}-sds/dp-sds/"
         
         with DAG(**default_dag(
-                    dag_id="dbt-workshop-sds-jaffle-shop",
+                    dag_id=f"dbt-workshop-sds-jaffle-shop-{environment}",
                     data_product=f"{COMPANY_NAME}-{PACKAGE_NAME}",
                     ENV=environment,
                     schedule=None,
