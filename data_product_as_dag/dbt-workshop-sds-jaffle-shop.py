@@ -201,73 +201,73 @@ for environment in environments:
 
             with TaskGroup(group_id="Transformations") as Transformations:
                 #staging
-                dbt_run_stg_jaffle_shop = gke_bash(
+                dbt_run_jaffle_shop = gke_bash(
                      dag, 
-                    "dbt_run_stg_jaffle_shop", 
+                    "dbt_run_jaffle_shop", 
                     IMAGE_DOCKER,
                     dbt_run_and_upload_cmd(profile_arg="/app/", 
                                             target_arg=f"--target={environment}",
                                             environment=environment_astrafy,
                                             target_path="jaffle_shop",
-                                            dbt_command=f"--select tag:stg_jaffle_shop",
+                                            dbt_command=f"--select tag:jaffle_shop",
                                             other_args=full_refresh_arg),
                     [], 
                     TriggerRule.ONE_SUCCESS,
                     node_affinity(),
                     'dbt-ksa')
-                #intermediate
-                dbt_run_int_jaffle_shop = gke_bash(
-                     dag, 
-                    "dbt_run_int_jaffle_shop",
-                    IMAGE_DOCKER, 
-                    dbt_run_and_upload_cmd(profile_arg="/app/", 
-                                           target_arg=f"--target={environment}",
-                                           environment=environment_astrafy,
-                                           target_path="jaffle_shop",
-                                           dbt_command=f"--select tag:int_jaffle_shop",
-                                           other_args=full_refresh_arg),
-                    [],
-                    TriggerRule.ONE_SUCCESS,
-                    node_affinity(),
-                    'dbt-ksa')
-                #mart
-                dbt_run_mart_jaffle_shop = gke_bash(
-                    dag, 
-                    "dbt_run_mart_jaffle_shop",
-                    IMAGE_DOCKER, 
-                    dbt_run_and_upload_cmd(profile_arg="/app/", 
-                                           target_arg=f"--target={environment}",
-                                           environment=environment_astrafy,
-                                           target_path="jaffle_shop",
-                                           dbt_command=f"--select tag:datamart_jaffle_shop",
-                                           other_args=full_refresh_arg),
-                    [],
-                    TriggerRule.ONE_SUCCESS,
-                    node_affinity(),
-                    'dbt-ksa')
-                #snapshot
-                dbt_snapshot_jaffle_shop = gke_bash(
-                    dag, 
-                    "dbt_snapshot_jaffle_shop",
-                    IMAGE_DOCKER, 
-                    dbt(profile_arg="/app/", 
-                        target_arg=f"--target={environment}",
-                        environment=environment_astrafy,
-                        target_path="jaffle_shop",
-                        dbt_command="snapshot",
-                        other_args=full_refresh_arg),
-                    [],
-                    TriggerRule.ONE_SUCCESS,
-                    node_affinity(),
-                    'dbt-ksa')
+                # #intermediate
+                # dbt_run_int_jaffle_shop = gke_bash(
+                #      dag, 
+                #     "dbt_run_int_jaffle_shop",
+                #     IMAGE_DOCKER, 
+                #     dbt_run_and_upload_cmd(profile_arg="/app/", 
+                #                            target_arg=f"--target={environment}",
+                #                            environment=environment_astrafy,
+                #                            target_path="jaffle_shop",
+                #                            dbt_command=f"--select tag:int_jaffle_shop",
+                #                            other_args=full_refresh_arg),
+                #     [],
+                #     TriggerRule.ONE_SUCCESS,
+                #     node_affinity(),
+                #     'dbt-ksa')
+                # #mart
+                # dbt_run_mart_jaffle_shop = gke_bash(
+                #     dag, 
+                #     "dbt_run_mart_jaffle_shop",
+                #     IMAGE_DOCKER, 
+                #     dbt_run_and_upload_cmd(profile_arg="/app/", 
+                #                            target_arg=f"--target={environment}",
+                #                            environment=environment_astrafy,
+                #                            target_path="jaffle_shop",
+                #                            dbt_command=f"--select tag:datamart_jaffle_shop",
+                #                            other_args=full_refresh_arg),
+                #     [],
+                #     TriggerRule.ONE_SUCCESS,
+                #     node_affinity(),
+                #     'dbt-ksa')
+                # #snapshot
+                # dbt_snapshot_jaffle_shop = gke_bash(
+                #     dag, 
+                #     "dbt_snapshot_jaffle_shop",
+                #     IMAGE_DOCKER, 
+                #     dbt(profile_arg="/app/", 
+                #         target_arg=f"--target={environment}",
+                #         environment=environment_astrafy,
+                #         target_path="jaffle_shop",
+                #         dbt_command="snapshot",
+                #         other_args=full_refresh_arg),
+                #     [],
+                #     TriggerRule.ONE_SUCCESS,
+                #     node_affinity(),
+                #     'dbt-ksa')
                 (
-                    dbt_run_stg_jaffle_shop
-                    >> Label("Run Intermediate tables")
-                    >> dbt_run_int_jaffle_shop
-                    >> Label("Run Data Mart tables")
-                    >> dbt_run_mart_jaffle_shop
-                    >> Label("Run Snapshot")
-                    >> dbt_snapshot_jaffle_shop
+                    dbt_run_jaffle_shop
+                    # >> Label("Run Intermediate tables")
+                    # >> dbt_run_int_jaffle_shop
+                    # >> Label("Run Data Mart tables")
+                    # >> dbt_run_mart_jaffle_shop
+                    # >> Label("Run Snapshot")
+                    # >> dbt_snapshot_jaffle_shop
                 )
 
             with TaskGroup(group_id="Distribution") as Distribution:
